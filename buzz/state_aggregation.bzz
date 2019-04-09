@@ -1,0 +1,113 @@
+
+SEN_APERTURE_DEG = 5.0
+SEN_APERTURE_SPLIT_RAD = 0.5* SEN_APERTURE_DEG * math.pi / 180.0
+
+SEN_DIST_CM = 300
+
+CUR_STATE = 0
+
+# N(R)(S)
+
+to_state = {
+	.s00 = 0,
+	.s01 = 0,
+	.s10 = 0,
+	.s10 = 0,
+	.s20 = 0,
+	.s21 = 0
+}
+
+left_speed = {
+	.vl00 = 9.0,
+	.vl01 = 9.0,
+	.vl10 = 3.0,
+	.vl11 = 3.0,
+	.vl20 = 3.0,
+	.vl21 = 3.0
+}
+
+right_speed = {
+	.vr00 = 1.0,
+	.vr01 = 1.0,
+	.vr10 = 9.0,
+	.vr11 = 9.0,
+	.vr20 = 9.0,
+	.vr21 = 9.0
+}
+	
+
+### BUZZ FUNCTIONS ##
+function init() {
+	
+}
+
+
+function step() {
+	
+	neighbors.broadcast("state", CUR_STATE)
+	var reading = sensor()
+	if (CUR_STATE == 0) {
+		if(reading == 0) {
+			set_leds(255, 0, 0)
+			set_wheels(left_speed.vl00, right_speed.vr00)
+		} else if (reading == 1) {
+			set_leds(0, 255, 0)
+			set_wheels(left_speed.vl10, right_speed.vr10)
+		} else {
+			set_leds(0, 0, 255)
+			set_wheels(left_speed.vl20, right_speed.vr20)
+		}
+	} else { #CUR_STATE == 1
+		if(reading == 0) {
+			set_leds(255, 0, 0)
+			set_wheels(left_speed.vl01, right_speed.vr01)
+		} else if (reading == 1) {
+			set_leds(0, 255, 0)
+			set_wheels(left_speed.vl11, right_speed.vr11)
+		} else {
+			set_leds(0, 0, 255)
+			set_wheels(left_speed.vl21, right_speed.vr21)
+		}
+	}
+}
+
+function sensor(){
+	closest_dist = 2*SEN_DIST_CM
+	closest_rid = -1
+	neighbors.foreach(
+		function(rid, data){
+			if (data.distance < SEN_DIST_CM) {
+				if ((data.azimuth > -SEN_APERTURE_SPLIT_RAD) and (data.azimuth < SEN_APERTURE_SPLIT_RAD)) {
+					if (data.distance < closest_dist) {
+						log("ID: ", id, " new nearest dist @ ", data.distance, " with: ", rid)
+						closest_dist = data.distance
+						closest_rid = rid
+					}
+				}
+			}
+		})
+	#log("ID: ", id, " closest_rid: ", closest_rid)
+	var target_state = -1
+	neighbors.listen("state", 
+		function(vid, value, rid){
+			#log("ID: ", id, " got (", vid, ",", value, ") from robot: ", rid)
+			if (rid == closest_rid) {
+				#log("ID: ", id, " state message from -> ", rid, " of value: ", value)
+				target_state = value
+			}
+		})
+	if (closest_rid == -1) {
+		return 0
+	} else if (target_state == CUR_STATE) {
+		return 1
+	} else {
+		return 2
+	}
+
+}
+
+function reset() {
+}
+
+function destroy() {
+}
