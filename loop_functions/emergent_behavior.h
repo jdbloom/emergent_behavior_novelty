@@ -1,15 +1,15 @@
-#ifndef THRESHOLD_MODEL_H
-#define THRESHOLD_MODEL_H
+#ifndef EMERGENT_BEHAVOIR_H
+#define EMERGENT_BEHAVOIR_H
 
 #include <buzz/argos/buzz_loop_functions.h>
 #include <argos3/core/utility/math/rng.h>
 
-class CThresholdModel : public CBuzzLoopFunctions {
+class CEmergentBehavoir : public CBuzzLoopFunctions {
 
 public:
 
-   CThresholdModel() {}
-   virtual ~CThresholdModel() {}
+   CEmergentBehavoir() {}
+   virtual ~CEmergentBehavoir() {}
 
    /**
     * Executes user-defined initialization logic.

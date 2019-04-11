@@ -1,4 +1,4 @@
-#include "threshold_model.h"
+#include "emergent_behavoir.h"
 #include "buzz/buzzvm.h"
 
 static CRange<Real> STIMULUS_RANGE(0.0, 1000.0);

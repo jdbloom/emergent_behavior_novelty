@@ -38,6 +38,17 @@
 
   </controllers>
 
+    <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="bin/libemergent_behavoir"
+                  label="emergent_behavoir"
+                  outfile="data.dat"
+                  delta="1"
+                  alpha="3"
+                  tasks="2"> <!-- if you change 'tasks', you must change it also in the script! -->
+  </loop_functions>  
+
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
