@@ -74,7 +74,7 @@ function sensor(){
 			if (data.distance < SEN_DIST_CM) {
 				if ((data.azimuth > -SEN_APERTURE_SPLIT_RAD) and (data.azimuth < SEN_APERTURE_SPLIT_RAD)) {
 					if (data.distance < closest_dist) {
-						log("ID: ", id, " new nearest dist @ ", data.distance, " with: ", rid)
+						# log("ID: ", id, " new nearest dist @ ", data.distance, " with: ", rid)
 						closest_dist = data.distance
 						closest_rid = rid
 					}
