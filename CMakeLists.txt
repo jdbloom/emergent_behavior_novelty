@@ -30,8 +30,11 @@ include_directories(${CMAKE_SOURCE_DIR} ${ARGOS_INCLUDE_DIRS})
 link_directories(${ARGOS_LIBRARY_DIRS})
 
 # Find Lua
-find_package(Lua52 REQUIRED)
-include_directories(${LUA_INCLUDE_DIR})
+find_package(Lua52)
+if(Lua52_FOUND)
+    include_directories(${LUA_INCLUDE_DIR})
+endif(Lua52_FOUND)
+
 
 # Check for Buzz
 find_package(Buzz REQUIRED)
