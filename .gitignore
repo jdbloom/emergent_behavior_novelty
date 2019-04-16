@@ -37,4 +37,6 @@
 
 bin/
 build/
+.idea/
 
+*.dat

@@ -6,7 +6,7 @@
   <!-- ************************* -->
   <framework>
     <system threads="0" />
-    <experiment length="0"
+    <experiment length="60"
                 ticks_per_second="10"
                 random_seed="90" />
   </framework>
@@ -42,10 +42,12 @@
   <!-- * Loop functions * -->
   <!-- ****************** -->
 
-  <!-- <loop_functions library="bin/libemergent_behavoir"
-                  label="emergent_behavoir"
-                  outfile="data.dat">
-   </loop_functions>  -->
+<loop_functions library="bin/libemergent_behavior"
+                  label="emergent_behavior"
+                  outfile="data.dat"
+                  speed1="PARAM1"
+                  speed2="PARAM2" >
+   </loop_functions>
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->

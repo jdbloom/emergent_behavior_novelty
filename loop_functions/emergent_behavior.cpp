@@ -136,7 +136,7 @@ void CEmergentBehavoir::Destroy() {
 /****************************************/
 
 void CEmergentBehavoir::PostStep() {
-   char delim = ','
+   char delim = ',';
    /* Get robot data */
    GetRobotData cGetRobotData(1);
    BuzzForeachVM(cGetRobotData);

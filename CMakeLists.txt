@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(emergent_behavoir)
+project(emergent_behavior)
 
 if(APPLE)
   # Add address sanitizer support for CLang
@@ -41,8 +41,8 @@ include_directories(${BUZZ_C_INCLUDE_DIR})
 set(SOURCE_FILES loop_functions/emergent_behavior.cpp loop_functions/emergent_behavior.h)
 
 # Compile code
-add_library(emergent_behavoir SHARED ${SOURCE_FILES})
-target_link_libraries(emergent_behavoir
+add_library(emergent_behavior SHARED ${SOURCE_FILES})
+target_link_libraries(emergent_behavior
   buzz
   argos3core_simulator
   argos3plugin_simulator_dynamics2d
