@@ -49,24 +49,18 @@ function step() {
 	updateFields(reading)
 	if (CUR_STATE == 0) {
 		if(reading == 0) {
-			set_leds(255, 0, 0)
 			set_wheels(left_speed.vl00, right_speed.vr00)
 		} else if (reading == 1) {
-			set_leds(0, 255, 0)
 			set_wheels(left_speed.vl10, right_speed.vr10)
 		} else {
-			set_leds(0, 0, 255)
 			set_wheels(left_speed.vl20, right_speed.vr20)
 		}
 	} else { #CUR_STATE == 1
 		if(reading == 0) {
-			set_leds(255, 0, 0)
 			set_wheels(left_speed.vl01, right_speed.vr01)
 		} else if (reading == 1) {
-			set_leds(0, 255, 0)
 			set_wheels(left_speed.vl11, right_speed.vr11)
 		} else {
-			set_leds(0, 0, 255)
 			set_wheels(left_speed.vl21, right_speed.vr21)
 		}
 	}
