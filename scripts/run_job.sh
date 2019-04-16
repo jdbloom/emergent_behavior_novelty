@@ -38,7 +38,7 @@ export PATH=$PATH:$HOME/buzzbundle/bin
 
 # Folder where you want your data to be stored
 # (Adapt this to your needs)
-DATADIR=~/data
+DATADIR=~/Experiment_Results
 
 # Path to the file template.argos
 # (Adapt this to your needs)
