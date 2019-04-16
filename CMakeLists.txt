@@ -38,7 +38,7 @@ find_package(Buzz REQUIRED)
 include_directories(${BUZZ_C_INCLUDE_DIR})
 
 # The sources 
-set(SOURCE_FILES loop_functions/emergent_behavoir.cpp loop_functions/emergent_behavoir.h)
+set(SOURCE_FILES loop_functions/emergent_behavior.cpp loop_functions/emergent_behavior.h)
 
 # Compile code
 add_library(emergent_behavoir SHARED ${SOURCE_FILES})

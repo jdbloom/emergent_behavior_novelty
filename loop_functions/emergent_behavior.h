@@ -55,23 +55,11 @@ private:
 
 private:
 
-   /** 'delta' parameter at slide 16 */
-   Real m_fDelta;
-
-   /** 'alpha' parameter at slide 16 */
-   Real m_fAlpha;
-
-   /** The stimuli associated to the tasks */
-   std::vector<float> m_vecStimuli;
-
    /** The output file name */
    std::string m_strOutFile;
 
    /** The output file stream */
    std::ofstream m_cOutFile;
-
-   /** Random number generator */
-   CRandom::CRNG* m_pcRNG;
 };
 
 #endif

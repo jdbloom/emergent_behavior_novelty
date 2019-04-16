@@ -46,6 +46,7 @@ function step() {
 	
 	neighbors.broadcast("state", CUR_STATE)
 	var reading = sensor()
+	updateFields(reading)
 	if (CUR_STATE == 0) {
 		if(reading == 0) {
 			set_leds(255, 0, 0)
@@ -103,6 +104,15 @@ function sensor(){
 	} else {
 		return 2
 	}
+
+}
+
+function updateFields(sensor_reading) {
+	cur_x = pose.position.x
+	cur_y = pose.position.y
+	cur_z = pose.orientation.yaw
+	cur_s = CUR_STATE
+	cur_r = sensor_reading
 
 }
 
