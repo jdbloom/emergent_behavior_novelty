@@ -37,6 +37,9 @@
 
 bin/
 build/
+build-debug
+build-release
 .idea/
 
 *.dat
+

@@ -2,16 +2,22 @@ cmake_minimum_required(VERSION 2.8.12)
 project(emergent_behavior)
 
 if(APPLE)
-  # Add address sanitizer support for CLang
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer")
-  set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
-  set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
-  set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
+  option(ASAN "Use Clang Address Sanitizer in Debug builds")
+  if(ASAN)
+    # Add address sanitizer support for CLang
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer")
+    set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
+    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
+  endif(ASAN)
 endif(APPLE)
 
 # Deactivate RPATH for MacOSX
 set(CMAKE_MACOSX_RPATH 0)
+
+# Set the path where CMake will find additional scripts
+set(CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 # Find the ARGoS package, make sure to save the ARGoS prefix
 find_package(PkgConfig)
@@ -23,11 +29,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ARGOS_PREFIX}/share/argos3/cmake)
 # code that depends on Qt and OpenGL
 include(ARGoSCheckQTOpenGL)
 
-# Set ARGoS include dir
-include_directories(${CMAKE_SOURCE_DIR} ${ARGOS_INCLUDE_DIRS})
-
-# Set ARGoS link dir
-link_directories(${ARGOS_LIBRARY_DIRS})
+# Look for the (optional) galib library
+find_package(GALIB)
+if(GALIB_FOUND)
+  include_directories(${GALIB_INCLUDE_DIRS})
+endif(GALIB_FOUND)
 
 # Find Lua
 find_package(Lua52)
@@ -35,23 +41,14 @@ if(Lua52_FOUND)
     include_directories(${LUA_INCLUDE_DIR})
 endif(Lua52_FOUND)
 
+# Set ARGoS include dir
+include_directories(${CMAKE_SOURCE_DIR} ${ARGOS_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
 
-# Check for Buzz
-find_package(Buzz REQUIRED)
-include_directories(${BUZZ_C_INCLUDE_DIR})
+# Set ARGoS link dir
+link_directories(${ARGOS_LIBRARY_DIRS})
 
-# The sources 
-set(SOURCE_FILES loop_functions/emergent_behavior.cpp loop_functions/emergent_behavior.h)
+# Descend into the loop_functions directory
+add_subdirectory(loop_functions)
 
-# Compile code
-add_library(emergent_behavior SHARED ${SOURCE_FILES})
-target_link_libraries(emergent_behavior
-  buzz
-  argos3core_simulator
-  argos3plugin_simulator_dynamics2d
-  argos3plugin_simulator_entities
-  argos3plugin_simulator_footbot
-  argos3plugin_simulator_genericrobot
-  argos3plugin_simulator_media
-  argos3plugin_simulator_qtopengl
-  argos3plugin_simulator_buzz)
+# Descend into the embedding directory
+add_subdirectory(embedding)
