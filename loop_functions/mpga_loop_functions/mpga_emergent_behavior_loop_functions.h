@@ -1,8 +1,8 @@
-#ifndef MPGA_PHOTOTAXIS_LOOP_FUNCTIONS_H
-#define MPGA_PHOTOTAXIS_LOOP_FUNCTIONS_H
+#ifndef MPGA_EMERGENT_BEHAVIOR_LOOP_FUNCTIONS_H
+#define MPGA_EMERGENT_BEHAVIOR_LOOP_FUNCTIONS_H
 
-/* The NN controller */
-#include <controllers/footbot_nn/footbot_nn_controller.h>
+/* The Buzz controller */
+#include <buzz/argos/buzz_loop_functions.h>
 
 /* ARGoS-related headers */
 #include <argos3/core/utility/math/rng.h>
@@ -35,12 +35,12 @@ static const size_t GENOME_SIZE = 98;
 
 using namespace argos;
 
-class CMPGAPhototaxisLoopFunctions : public CMPGALoopFunctions {
+class CMPGAEmergentBehaviorLoopFunctions : public CMPGALoopFunctions {
 
 public:
 
-   CMPGAPhototaxisLoopFunctions();
-   virtual ~CMPGAPhototaxisLoopFunctions();
+   CMPGAEmergentBehaviorLoopFunctions();
+   virtual ~CMPGAEmergentBehaviorLoopFunctions();
 
    virtual void Init(TConfigurationNode& t_node);
    virtual void Reset();
@@ -60,8 +60,8 @@ private:
    };
 
    std::vector<SInitSetup> m_vecInitSetup;
-   CFootBotEntity* m_pcFootBot;
-   CFootBotNNController* m_pcController;
+//   CFootBotEntity* m_pcFootBot;
+//   CFootBotNNController* m_pcController;
    Real* m_pfControllerParams;
    CRandom::CRNG* m_pcRNG;
 

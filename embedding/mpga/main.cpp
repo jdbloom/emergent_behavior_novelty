@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <loop_functions/mpga_loop_functions/mpga.h>
-#include <loop_functions/mpga_loop_functions/mpga_phototaxis_loop_functions.h>
+#include <loop_functions/mpga_loop_functions/mpga_emergent_behavior_loop_functions.h>
 
 /*
  * Flush best individual

@@ -3,24 +3,24 @@
 /****************************************/
 /****************************************/
 
-CMPGAPhototaxisLoopFunctions::CMPGAPhototaxisLoopFunctions() :
+CMPGAEmergentBehaviorLoopFunctions::CMPGAEmergentBehaviorLoopFunctions() :
    m_vecInitSetup(5),
-   m_pcFootBot(NULL),
-   m_pcController(NULL),
+//   m_pcFootBot(NULL),
+//   m_pcController(NULL),
    m_pfControllerParams(new Real[GENOME_SIZE]),
    m_pcRNG(NULL) {}
 
 /****************************************/
 /****************************************/
 
-CMPGAPhototaxisLoopFunctions::~CMPGAPhototaxisLoopFunctions() {
+CMPGAEmergentBehaviorLoopFunctions::~CMPGAEmergentBehaviorLoopFunctions() {
    delete[] m_pfControllerParams;
 }
 
 /****************************************/
 /****************************************/
 
-void CMPGAPhototaxisLoopFunctions::Init(TConfigurationNode& t_node) {
+void CMPGAEmergentBehaviorLoopFunctions::Init(TConfigurationNode& t_node) {
    /*
     * Create the random number generator
     */
@@ -29,12 +29,12 @@ void CMPGAPhototaxisLoopFunctions::Init(TConfigurationNode& t_node) {
    /*
     * Create the foot-bot and get a reference to its controller
     */
-   m_pcFootBot = new CFootBotEntity(
-      "fb",    // entity id
-      "fnn"    // controller id as set in the XML
-      );
-   AddEntity(*m_pcFootBot);
-   m_pcController = &dynamic_cast<CFootBotNNController&>(m_pcFootBot->GetControllableEntity().GetController());
+//   m_pcFootBot = new CFootBotEntity(
+//      "fb",    // entity id
+//      "fnn"    // controller id as set in the XML
+//      );
+//   AddEntity(*m_pcFootBot);
+//   m_pcController = &dynamic_cast<CFootBotNNController&>(m_pcFootBot->GetControllableEntity().GetController());
 
    /*
     * Create the initial setup for each trial
@@ -77,46 +77,47 @@ void CMPGAPhototaxisLoopFunctions::Init(TConfigurationNode& t_node) {
 /****************************************/
 /****************************************/
 
-void CMPGAPhototaxisLoopFunctions::Reset() {
+void CMPGAEmergentBehaviorLoopFunctions::Reset() {
    /*
     * Move robot to the initial position corresponding to the current trial
     */
-   if(!MoveEntity(
-         m_pcFootBot->GetEmbodiedEntity(),             // move the body of the robot
-         m_vecInitSetup[GetTrial()].Position,    // to this position
-         m_vecInitSetup[GetTrial()].Orientation, // with this orientation
-         false                                         // this is not a check, leave the robot there
-         )) {
-      LOGERR << "Can't move robot in <"
-             << m_vecInitSetup[GetTrial()].Position
-             << ">, <"
-             << m_vecInitSetup[GetTrial()].Orientation
-             << ">"
-             << std::endl;
-   }
+//   if(!MoveEntity(
+//         m_pcFootBot->GetEmbodiedEntity(),             // move the body of the robot
+//         m_vecInitSetup[GetTrial()].Position,    // to this position
+//         m_vecInitSetup[GetTrial()].Orientation, // with this orientation
+//         false                                         // this is not a check, leave the robot there
+//         )) {
+//      LOGERR << "Can't move robot in <"
+//             << m_vecInitSetup[GetTrial()].Position
+//             << ">, <"
+//             << m_vecInitSetup[GetTrial()].Orientation
+//             << ">"
+//             << std::endl;
+//   }
 }
 
 /****************************************/
 /****************************************/
 
-void CMPGAPhototaxisLoopFunctions::ConfigureFromGenome(const Real* pf_genome) {
+void CMPGAEmergentBehaviorLoopFunctions::ConfigureFromGenome(const Real* pf_genome) {
    /* Copy the genes into the NN parameter buffer */
    for(size_t i = 0; i < GENOME_SIZE; ++i) {
       m_pfControllerParams[i] = pf_genome[i];
    }
    /* Set the NN parameters */
-   m_pcController->GetPerceptron().SetOnlineParameters(GENOME_SIZE, m_pfControllerParams);
+//   m_pcController->GetPerceptron().SetOnlineParameters(GENOME_SIZE, m_pfControllerParams);
 }
 
 /****************************************/
 /****************************************/
 
-Real CMPGAPhototaxisLoopFunctions::Score() {
+Real CMPGAEmergentBehaviorLoopFunctions::Score() {
    /* The performance is simply the distance of the robot to the origin */
-   return m_pcFootBot->GetEmbodiedEntity().GetOriginAnchor().Position.Length();
+   return 1.0;
+//   m_pcFootBot->GetEmbodiedEntity().GetOriginAnchor().Position.Length();
 }
 
 /****************************************/
 /****************************************/
 
-REGISTER_LOOP_FUNCTIONS(CMPGAPhototaxisLoopFunctions, "mpga_phototaxis_loop_functions")
+REGISTER_LOOP_FUNCTIONS(CMPGAEmergentBehaviorLoopFunctions, "mpga_emergent_behavior_loop_functions")
