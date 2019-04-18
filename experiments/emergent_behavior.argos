@@ -16,7 +16,7 @@
     <!-- *************** -->
     <controllers>
 
-        <buzz_controller_kheperaiv id="state_aggregate">
+        <buzz_controller_kheperaiv id="ebc">
             <actuators>
                 <differential_steering implementation="default"/>
                 <leds implementation="default" medium="leds"/>
