@@ -46,3 +46,6 @@ add_subdirectory(loop_functions)
 
 # Descend into the embedding directory
 add_subdirectory(embedding)
+
+# Descend into the analysis directory
+add_subdirectory(analysis)
