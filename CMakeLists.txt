@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(emergent_behavior)
 
-if(APPLE)
-  option(ASAN "Use Clang Address Sanitizer in Debug builds")
-  if(ASAN)
-    # Add address sanitizer support for CLang
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer")
-    set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
-  endif(ASAN)
-endif(APPLE)
+if (APPLE)
+    option(ASAN "Use Clang Address Sanitizer in Debug builds")
+    if (ASAN)
+        # Add address sanitizer support for CLang
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer")
+        set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
+        set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
+        set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -fsanitize=address")
+    endif (ASAN)
+endif (APPLE)
 
 # Deactivate RPATH for MacOSX
 set(CMAKE_MACOSX_RPATH 0)
@@ -29,17 +29,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ARGOS_PREFIX}/share/argos3/cmake)
 # code that depends on Qt and OpenGL
 include(ARGoSCheckQTOpenGL)
 
-# Look for the (optional) galib library
-find_package(GALIB)
-if(GALIB_FOUND)
-  include_directories(${GALIB_INCLUDE_DIRS})
-endif(GALIB_FOUND)
-
 # Find Lua
 find_package(Lua52)
-if(Lua52_FOUND)
+if (Lua52_FOUND)
     include_directories(${LUA_INCLUDE_DIR})
-endif(Lua52_FOUND)
+endif (Lua52_FOUND)
 
 # Set ARGoS include dir
 include_directories(${CMAKE_SOURCE_DIR} ${ARGOS_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
