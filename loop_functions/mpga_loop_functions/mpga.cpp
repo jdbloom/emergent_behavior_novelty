@@ -397,3 +397,8 @@ void CMPGA::CSharedMem::SetScore(UInt32 un_individual,
 
 /****************************************/
 /****************************************/
+
+
+const std::vector<pid_t> &CMPGA::getSlavePIDs() const {
+    return SlavePIDs;
+}

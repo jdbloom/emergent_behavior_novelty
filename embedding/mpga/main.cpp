@@ -26,6 +26,24 @@ void FlushIndividual(const CMPGA::SIndividual &s_ind,
     cOFS << std::endl;
 }
 
+void FlushToMasterFile(const std::vector<pid_t> &slavePIDs){
+    std::ofstream masterScoreFile("master_scores.csv", std::ios::out | std::ios::app);
+    if(masterScoreFile.is_open()){
+        for(auto pid : slavePIDs){
+            std::ifstream indScoreFile(std::string("score_" + ToString(pid) + ".csv").c_str(), std::ios::in);
+            std::string line;
+            if(indScoreFile.is_open()){
+                while(getline(indScoreFile, line)){
+                    masterScoreFile << line << std::endl;
+                }
+            }
+            indScoreFile.close();
+        }
+    }
+    masterScoreFile.close();
+
+}
+
 /*
  * The function used to aggregate the scores of each trial.  In this
  * experiment, the score is the distance of the robot from the
@@ -33,29 +51,32 @@ void FlushIndividual(const CMPGA::SIndividual &s_ind,
  */
 Real ScoreAggregator(const std::vector<Real> &vec_scores) {
     Real fScore = vec_scores[0];
-    for (size_t i = 1; i < vec_scores.size(); ++i) {
-        fScore = Max(fScore, vec_scores[i]);
-    }
     return fScore;
 }
 
-int main() {
-    CMPGA cGA(CRange<Real>(0, 10.0),               // Allele range
-              GENOME_SIZE,                         // Genome size
-              5,                                   // Population size
-              0.05,                                // Mutation probability
-              1,                                   // Number of trials
-              100,                                 // Number of generations
-              true,                                // Maximize score
-              "experiments/mpga.argos",            // .argos conf file
-              &ScoreAggregator,                    // The score aggregator
-              12345                                // Random seed
+int main(int argc, char *argv[]) {
+    if(argc != 2){
+        std::cerr << "Didn't provide the randseed" << std::endl;
+    }
+
+    auto randSeed = (UInt32) atoi(argv[1]);
+
+    CMPGA cGA(CRange<Real>(0, 10.0),                    // Allele range
+              GENOME_SIZE,                              // Genome size
+              5,                                        // Population size
+              0.05,                                     // Mutation probability
+              1,                                        // Number of trials
+              100,                                      // Number of generations
+              true,                                     // Maximize score
+              "experiments/emergent_behavior.argos",    // .argos conf file
+              &ScoreAggregator,                         // The score aggregator
+              randSeed                                  // Random seed
     );
     cGA.Evaluate();
     argos::LOG << "Generation #" << cGA.GetGeneration() << "...";
     argos::LOG << " scores:";
-    for (UInt32 i = 0; i < cGA.GetPopulation().size(); ++i) {
-        argos::LOG << " " << cGA.GetPopulation()[i]->Score;
+    for (auto pop : cGA.GetPopulation()){
+        argos::LOG << " " << pop->Score;
     }
     LOG << std::endl;
     LOG.Flush();
@@ -75,6 +96,8 @@ int main() {
             argos::LOG << "done.]";
         }
         LOG << std::endl;
+        argos::LOG << "Flushing scores to master file" << std::endl;
+        FlushToMasterFile(cGA.getSlavePIDs());
         LOG.Flush();
     }
     return 0;

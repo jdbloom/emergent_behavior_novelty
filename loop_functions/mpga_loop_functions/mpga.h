@@ -113,6 +113,8 @@ public:
      */
     virtual bool Done() const;
 
+    const std::vector<pid_t> &getSlavePIDs() const;
+
 private:
 
     /** Executes the slave process that manages ARGoS */
@@ -180,6 +182,7 @@ private:
          */
         void SetScore(UInt32 un_individual,
                       Real f_score);
+
 
     private:
 

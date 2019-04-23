@@ -33,7 +33,10 @@
                                soft_turn_angle_threshold="70"
                                no_turn_angle_threshold="10"
                                max_speed="10"/>
+                bytecode_file="build-release/buzz/emergent_behavior.bo"
+                debug_file="build-release/buzz/emergent_behavior.bdb"
             </params>
+
         </buzz_controller_kheperaiv>
 
     </controllers>
@@ -42,12 +45,9 @@
     <!-- * Loop functions * -->
     <!-- ****************** -->
 
-    <loop_functions library="bin/libemergent_behavior"
-                    label="emergent_behavior"
-                    outfile="data.dat"
-                    num_robots="15"
-                    speed1="PARAM1"
-                    speed2="PARAM2">
+    <loop_functions library="build-release/loop_functions/mpga_loop_functions/libmpga_emergent_behavior_loop_functions.so"
+                    label="mpga_emergent_behavior_loop_functions"
+                    num_robots="15">
     </loop_functions>
 
     <!-- *********************** -->
@@ -77,15 +77,17 @@
             from a gaussian distribution, whose mean is zero degrees and
             standard deviation is 360 degrees.
         -->
+        <!--
         <distribute>
             <position method="uniform" min="-2,-2,0" max="2,2,0"/>
             <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0"/>
             <entity quantity="10" max_trials="100">
                 <kheperaiv id="kiv" rab_data_size="200">
-                    <controller config="state_aggregate"/>
+                    <controller config="ebc"/>
                 </kheperaiv>
             </entity>
         </distribute>
+        -->
 
     </arena>
 

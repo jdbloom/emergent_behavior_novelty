@@ -33,6 +33,7 @@
  */
 static const size_t GENOME_SIZE = 18;
 
+const Real KHEPERAIV_BASE_RADIUS    = 0.0704;
 static const std::string KH_CONTROLLER      = "ebc";
 static const Real        KH_COMMRANGE       = 10. ;
 static const UInt32      KH_DATASIZE        = 300;
@@ -65,6 +66,8 @@ private:
 
     void CreateRobots(UInt32 un_robots);
 
+    void printErr(std::string in);
+
     /* The initial setup of a trial */
     struct SInitSetup {
         CVector3 Position;
@@ -74,7 +77,7 @@ private:
     std::vector<SInitSetup> m_vecInitSetup;
     std::vector<CKheperaIVEntity*> m_vecKheperas;
     std::vector<CBuzzController*> m_vecControllers;
-    std::vector<float> m_pfControllerParams;
+    std::vector<Real> m_pfControllerParams;
     CRandom::CRNG *m_pcRNG;
 
 
