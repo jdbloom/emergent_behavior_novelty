@@ -144,35 +144,6 @@ void CMPGAEmergentBehaviorLoopFunctions::Init(TConfigurationNode &t_node) {
     LOGERR.Flush();
 
     /*
-     * Create the initial setup for each trial
-     * The robot is placed 4.5 meters away from the light
-     * (which is in the origin) at angles
-     * { PI/12, 2*PI/12, 3*PI/12, 4*PI/12, 5*PI/12 }
-     * wrt to the world reference.
-     * Also, the rotation of the robot is chosen at random
-     * from a uniform distribution.
-     */
-//    CRadians cOrient;
-//
-//    CRadians step = CRadians::TWO_PI / static_cast<Real>(iNumRobots);
-//
-//    for (size_t i = 0; i < iNumRobots; ++i) {
-//        /* Set position */
-//        m_vecInitSetup[i].Position.FromSphericalCoords(
-//                4.5f,                                          // distance from origin
-//                CRadians::PI_OVER_TWO,                         // angle with Z axis
-//                static_cast<Real>(i) * step                    // rotation around Z
-//        );
-//        /* Set orientation */
-//        cOrient = m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE);
-//        m_vecInitSetup[i].Orientation.FromEulerAngles(
-//                cOrient,        // rotation around Z
-//                CRadians::ZERO, // rotation around Y
-//                CRadians::ZERO  // rotation around X
-//        );
-//    }
-
-    /*
      * Process trial information, if any
      */
     try {
@@ -295,15 +266,15 @@ Real CMPGAEmergentBehaviorLoopFunctions::Score() {
     cScoreFile.close();
     /* The performance is simply the distance of the robot to the origin */
     return maxDistance;
-//   m_pcFootBot->GetEmbodiedEntity().GetOriginAnchor().Position.Length();
 }
 
 /****************************************/
 /****************************************/
 
 void CMPGAEmergentBehaviorLoopFunctions::CreateRobots(UInt32 un_robots) {
+    const float step = 0.25;
     for(size_t i = 0; i < un_robots; ++i) {
-        CVector3 pos(-20 + i * KH_INIT_DISTANCE, 20, 0);
+        CVector3 pos(-2 + i * step, 2 - i * step, 0);
         CQuaternion head;
         /* Create robot */
         CKheperaIVEntity* pcRobot = new CKheperaIVEntity(
@@ -325,9 +296,8 @@ void CMPGAEmergentBehaviorLoopFunctions::CreateRobots(UInt32 un_robots) {
         str.Position = pos;
         str.Orientation = head;
         m_vecInitSetup.push_back(str);
-
-
     }
+    BuzzRegisterVMs();
 }
 
 void CMPGAEmergentBehaviorLoopFunctions::printErr(std::string in){
