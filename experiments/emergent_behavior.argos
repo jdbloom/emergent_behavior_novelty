@@ -28,13 +28,13 @@
                                    show_rays="true" noise_std_dev="0"/>
                 <positioning implementation="default"/>
             </sensors>
-            <params>
+            <params bytecode_file="buzz/emergent_behavior.bo"
+                    debug_file="buzz/emergent_behavior.bdb" >
                 <wheel_turning hard_turn_angle_threshold="90"
                                soft_turn_angle_threshold="70"
                                no_turn_angle_threshold="10"
                                max_speed="10"/>
-                bytecode_file="build-release/buzz/emergent_behavior.bo"
-                debug_file="build-release/buzz/emergent_behavior.bdb"
+
             </params>
 
         </buzz_controller_kheperaiv>
@@ -45,7 +45,7 @@
     <!-- * Loop functions * -->
     <!-- ****************** -->
 
-    <loop_functions library="build-release/loop_functions/mpga_loop_functions/libmpga_emergent_behavior_loop_functions.so"
+    <loop_functions library="build-debug/loop_functions/mpga_loop_functions/libmpga_emergent_behavior_loop_functions.so"
                     label="mpga_emergent_behavior_loop_functions"
                     num_robots="15">
     </loop_functions>
@@ -55,17 +55,17 @@
     <!-- *********************** -->
     <arena size="5, 5, 1" center="0,0,0.5">
 
-        <box id="wall_north" size="4,0.1,0.5" movable="false">
-            <body position="0,2,0" orientation="0,0,0"/>
+        <box id="wall_north" size="5,0.1,0.5" movable="false">
+            <body position="0,2.5,0" orientation="0,0,0"/>
         </box>
-        <box id="wall_south" size="4,0.1,0.5" movable="false">
-            <body position="0,-2,0" orientation="0,0,0"/>
+        <box id="wall_south" size="5,0.1,0.5" movable="false">
+            <body position="0,-2.5,0" orientation="0,0,0"/>
         </box>
-        <box id="wall_east" size="0.1,4,0.5" movable="false">
-            <body position="2,0,0" orientation="0,0,0"/>
+        <box id="wall_east" size="0.1,5,0.5" movable="false">
+            <body position="2.5,0,0" orientation="0,0,0"/>
         </box>
-        <box id="wall_west" size="0.1,4,0.5" movable="false">
-            <body position="-2,0,0" orientation="0,0,0"/>
+        <box id="wall_west" size="0.1,5,0.5" movable="false">
+            <body position="-2.5,0,0" orientation="0,0,0"/>
         </box>
 
         <!--
@@ -109,10 +109,11 @@
     <!-- ****************** -->
     <!-- * Visualization * -->
     <!-- ****************** -->
+<!--
     <visualization>
         <qt-opengl>
             <user_functions label="buzz_qt"/>
         </qt-opengl>
     </visualization>
-
+-->
 </argos-configuration>
