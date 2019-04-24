@@ -6,38 +6,44 @@ SEN_DIST_CM = 300
 
 CUR_STATE = 0
 
+
 speed = 0.0
 
 # (Type)(Reading)(State)
 genome = {
     .0  = 0.0, #s'00
-    .1  = 0.0, #vl00
-    .2  = 0.0, #vr00
+    .1  = 1.0, #vl00
+    .2  = 1.0, #vr00
     .3  = 0.0, #s'01
-    .4  = 0.0, #vl01
-    .5  = 0.0, #vr01
+    .4  = 1.0, #vl01
+    .5  = 1.0, #vr01
     .6  = 0.0, #s'10
-    .7  = 0.0, #vl10
-    .8  = 0.0, #vr10
+    .7  = 1.0, #vl10
+    .8  = 1.0, #vr10
     .9  = 0.0, #s'11
-    .10 = 0.0, #vl11
-    .11 = 0.0, #vr11
+    .10 = 1.0, #vl11
+    .11 = 1.0, #vr11
     .12 = 0.0, #s'20
-    .13 = 0.0, #vl20
-    .14 = 0.0, #vr20
+    .13 = 1.0, #vl20
+    .14 = 1.0, #vr20
     .15 = 0.0, #s'21
-    .16 = 0.0, #vl21
-    .17 = 0.0  #vr21
+    .16 = 1.0, #vl21
+    .17 = 1.0  #vr21
 }
 
 ### BUZZ FUNCTIONS ##
 function init() {
 	CUR_STATE = id % 2
+	cur_x = pose.position.x
+	cur_y = pose.position.y
+	cur_z = pose.orientation.yaw
+	cur_s = CUR_STATE
+	cur_r = 0
+	cur_speed = 0
 }
 
 
 function step() {
-	
 	neighbors.broadcast("state", CUR_STATE)
 	var reading = sensor()
 	updateFields(reading)
