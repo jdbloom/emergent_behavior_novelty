@@ -89,15 +89,10 @@ trap cleanup EXIT SIGINT SIGTERM
 #
 ########################################
 
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release ~/Swarms_Group_2
-make -j4
-cd ..
 cp -r ~/Swarms_Group_2/experiments .
 cp -r ~/Swarms_Group_2/buzz .
 bzzc buzz/emergent_behavior.bzz
-./build/embedding/mpga/mpga_emergent_behavior ${RAND_SEED}
+~/Swarms_Group_2/build/embedding/mpga/mpga_emergent_behavior ${RAND_SEED}
 
 # Transfer info back to my home directory
 mkdir data_${THISJOB}

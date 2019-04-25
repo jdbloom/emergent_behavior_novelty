@@ -1,6 +1,5 @@
 add_executable(mpga_emergent_behavior main.cpp)
 target_link_libraries(mpga_emergent_behavior
-        buzz
         argos3plugin_simulator_buzz
         argos3core_simulator
         argos3plugin_simulator_dynamics2d
