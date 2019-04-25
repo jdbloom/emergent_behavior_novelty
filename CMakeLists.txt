@@ -36,12 +36,13 @@ if (Lua52_FOUND)
     include_directories(${LUA_INCLUDE_DIR})
 endif (Lua52_FOUND)
 
-find_package(Buzz)
+find_package(Buzz REQUIRED)
 if(BUZZ_FOUND)
     include_directories(${BUZZ_C_INCLUDE_DIR})
 endif(BUZZ_FOUND)
+
 # Set ARGoS include dir
-include_directories(${CMAKE_SOURCE_DIR} ${ARGOS_INCLUDE_DIRS} )#${LUA_INCLUDE_DIR})
+include_directories(${CMAKE_SOURCE_DIR} ${ARGOS_INCLUDE_DIRS} )
 
 # Set ARGoS link dir
 link_directories(${ARGOS_LIBRARY_DIRS})

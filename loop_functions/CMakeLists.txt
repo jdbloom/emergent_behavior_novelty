@@ -1,6 +1,5 @@
 include_directories(${CMAKE_SOURCE_DIR})
 
-message(${CMAKE_INCLUDE_PATH})
 # Compile MPGA library (generic library for multi-process genetic algorithm)
 add_library(mpga SHARED
         mpga.h mpga.cpp
