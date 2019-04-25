@@ -1,5 +1,5 @@
 include_directories(${CMAKE_SOURCE_DIR})
-message(${CMAKE_SOURCE_DIR})
+
 # Compile MPGA library (generic library for multi-process genetic algorithm)
 add_library(mpga SHARED
         mpga.h mpga.cpp
@@ -25,4 +25,5 @@ target_link_libraries(mpga_emergent_behavior_loop_functions
         argos3plugin_simulator_kheperaiv
         argos3plugin_simulator_media
         mpga
-        analysis)
+        analysis
+        ${BUZZ_LIBRARY})
