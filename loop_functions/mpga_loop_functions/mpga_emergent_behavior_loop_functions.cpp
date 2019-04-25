@@ -286,10 +286,23 @@ Real CMPGAEmergentBehaviorLoopFunctions::Score() {
 /****************************************/
 
 void CMPGAEmergentBehaviorLoopFunctions::CreateRobots(UInt32 un_robots) {
-    const float step = 0.25;
+    CRadians robStep = CRadians::TWO_PI / static_cast<Real>(un_robots);
+    CRadians cOrient;
     for(size_t i = 0; i < un_robots; ++i) {
-        CVector3 pos(-2 + i * step, 2 - i * step, 0);
+        CVector3 pos;
+        pos.FromSphericalCoords(
+                2.0f,
+                CRadians::PI_OVER_TWO,
+                CRadians(i * robStep));
+        pos.SetZ(0.0);
+
         CQuaternion head;
+        cOrient = m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE);
+        head.FromEulerAngles(
+                cOrient,        // rotation around Z
+                CRadians::ZERO, // rotation around Y
+                CRadians::ZERO  // rotation around X
+        );
         /* Create robot */
         CKheperaIVEntity* pcRobot = new CKheperaIVEntity(
                 "kh" + ToString(i),
