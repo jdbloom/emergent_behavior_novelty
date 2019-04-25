@@ -6,7 +6,7 @@ add_library(mpga SHARED
         mpga_loop_functions.h mpga_loop_functions.cpp)
 target_link_libraries(mpga
         argos3core_simulator
-        buzz
+        ${BUZZ_LIBRARY}
         argos3plugin_simulator_buzz)
 
 if (NOT APPLE)
