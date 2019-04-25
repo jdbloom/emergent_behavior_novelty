@@ -4,15 +4,12 @@
 set -e
 
 # Create data dir if not already there
-mkdir -p data
+mkdir -p Experiment_Results
 
-# Go through all the values for PARAM1
-for PARAM1 in value1 value2 ... valueN
-  # Go through all the values for PARAM2
-  for PARAM2 in value1 value2 ... valueM
+for RAND_SEED in 12345 67890 13579 24680
+do
     # Submit job
-    sbatch run_job.sh $PARAM1 $PARAM2
+    sbatch run_job.sh ${RAND_SEED}
     # Sleep for 1 second to avoid overloading the machine
     sleep 1
-  done
 done
