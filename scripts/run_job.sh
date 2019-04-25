@@ -79,7 +79,7 @@ rm -rf ${WORKDIR} && mkdir -p ${WORKDIR} && cd ${WORKDIR}
 
 # Make sure you cleanup upon exit
 # (Don't change this)
-trap cleanup EXIT SIGINT SIGTERM
+#trap cleanup EXIT SIGINT SIGTERM
 
 
 
