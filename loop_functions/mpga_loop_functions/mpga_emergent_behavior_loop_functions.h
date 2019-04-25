@@ -56,6 +56,8 @@ public:
 
     virtual void Reset();
 
+    virtual void PreStep();
+
     /* Configures the robot controller from the genome */
     virtual void ConfigureFromGenome(const Real *pf_genome);
 

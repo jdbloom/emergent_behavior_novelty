@@ -34,7 +34,7 @@ struct PutGenome : public CBuzzLoopFunctions::COperation {
     /** The action happens here */
     virtual void operator()(const std::string& str_robot_id,
                             buzzvm_t t_vm) {
-        /* Set the values of the table 'stimulus' in the Buzz VM */
+        /* Set the values of the table 'genome' in the Buzz VM */
         BuzzTableOpen(t_vm, "genome");
         for(int i = 0; i < m_vecGenome.size(); ++i) {
             BuzzTablePut(t_vm, i, (float) m_vecGenome[i]);
@@ -61,7 +61,6 @@ struct GetRobotData : public CBuzzLoopFunctions::COperation {
     /** The action happens here */
     virtual void operator()(const std::string& str_robot_id,
                             buzzvm_t t_vm) {
-
         buzzobj_t tCurX = BuzzGet(t_vm, "cur_x");
         if (!buzzobj_isfloat(tCurX)) {
             LOGERR << str_robot_id << ": variable 'cur_x' has wrong type " << buzztype_desc[tCurX->o.type] << std::endl;
@@ -116,6 +115,7 @@ struct GetRobotData : public CBuzzLoopFunctions::COperation {
         m_vecRobotSpeed.push_back(fCurSpeed);
         m_vecRobotReading.push_back(iCurR);
         m_vecRobotState.push_back(iCurS);
+
     }
 
     int temp;
@@ -187,6 +187,12 @@ void CMPGAEmergentBehaviorLoopFunctions::Reset() {
 
 /****************************************/
 /****************************************/
+void CMPGAEmergentBehaviorLoopFunctions::PreStep() {
+    PutGenome cPutGenome(m_pfControllerParams);
+    BuzzForeachVM(cPutGenome);
+}
+/****************************************/
+/****************************************/
 
 void CMPGAEmergentBehaviorLoopFunctions::ConfigureFromGenome(const Real *pf_genome) {
     printErr("Started Config from Genome");
@@ -215,31 +221,37 @@ Real CMPGAEmergentBehaviorLoopFunctions::Score() {
     std::ifstream score_files("master_scores.csv", std::ios::in);
 
     std::string line;
-    Real maxDistance = -1.0;
+    Real minDistance = 99999;
     LOGERR << "Started Grading" << std::endl;
     LOGERR.Flush();
+    bool skipped = false;
     if(score_files.is_open()){
         while(getline( score_files, line)){
-            double scores[GENOME_SIZE + results.size];
-            ParseValues(line, (UInt32) GENOME_SIZE + results.size, scores ,',');
-            Real comp_sparseness = scores[GENOME_SIZE];
-            Real comp_distance = scores[GENOME_SIZE + 1];
-            Real comp_radial = scores[GENOME_SIZE + 2];
-            Real comp_speed = scores[GENOME_SIZE + 3];
-            Real comp_angular = scores[GENOME_SIZE + 4];
-            //State difference is not calculated as part of the score
+            if(skipped){
+                double scores[GENOME_SIZE + results.size + 1]; //Genomes, feature scores, +1 for the actual score that gets added
+                ParseValues(line, (UInt32) GENOME_SIZE + results.size, scores ,',');
+                Real comp_sparseness = scores[GENOME_SIZE];
+                Real comp_distance = scores[GENOME_SIZE + 1];
+                Real comp_radial = scores[GENOME_SIZE + 2];
+                Real comp_speed = scores[GENOME_SIZE + 3];
+                Real comp_angular = scores[GENOME_SIZE + 4];
+                //State difference is not calculated as part of the score
+                //Same with the previous generations
 
-            Real dist = sqrt(pow(comp_sparseness - results.Sparseness, 2) +
-                    pow(comp_distance - results.Distance, 2) +
-                    pow(comp_radial - results.RadialStdDev, 2) +
-                    pow(comp_speed - results.Speed, 2) +
-                    pow(comp_angular - results.AngularMomentum, 2));
-            if (dist > maxDistance){
-                maxDistance = dist;
+                Real dist = sqrt(pow(comp_sparseness - results.Sparseness, 2) +
+                                 pow(comp_distance - results.Distance, 2) +
+                                 pow(comp_radial - results.RadialStdDev, 2) +
+                                 pow(comp_speed - results.Speed, 2) +
+                                 pow(comp_angular - results.AngularMomentum, 2));
+                if (dist < minDistance){
+                    minDistance = dist;
+                }
+            } else {
+                skipped = true;
             }
         }
     } else {
-        maxDistance = 0;
+        minDistance = 0;
     }
     LOGERR << "Finished Grading" << std::endl;
     LOGERR.Flush();
@@ -254,18 +266,20 @@ Real CMPGAEmergentBehaviorLoopFunctions::Score() {
             cScoreFile << val << ',';
         }
         cScoreFile
-        << results.Sparseness << ','
-        << results.Distance << ','
-        << results.RadialStdDev << ','
-        << results.Speed << ','
-        << results.AngularMomentum << ','
-        << results.StateZeroCount << std::endl;
+                << results.Sparseness << ','
+                << results.Distance << ','
+                << results.RadialStdDev << ','
+                << results.Speed << ','
+                << results.AngularMomentum << ','
+                << results.StateZeroCount << ','
+                << minDistance << std::endl;
     } else {
         //panic
     }
     cScoreFile.close();
+
     /* The performance is simply the distance of the robot to the origin */
-    return maxDistance;
+    return minDistance;
 }
 
 /****************************************/
