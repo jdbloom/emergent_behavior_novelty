@@ -8,6 +8,8 @@ set -e
 
 # Cleanup function to be executed upon exit, for any reason
 function cleanup() {
+    mkdir -p /home/djcupo/ERRORS
+    cp * /home/djcupo/ERRORS
     rm -rf ${WORKDIR}
 }
 
@@ -79,7 +81,7 @@ rm -rf ${WORKDIR} && mkdir -p ${WORKDIR} && cd ${WORKDIR}
 
 # Make sure you cleanup upon exit
 # (Don't change this)
-#trap cleanup EXIT SIGINT SIGTERM
+trap cleanup EXIT SIGINT SIGTERM
 
 
 
