@@ -59,7 +59,7 @@ RAND_SEED=$1
 
 # Job id
 # (Change this to reflect the above parameters)
-THISJOB=${RAND_SEED}_JOB
+THISJOB=${RAND_SEED}
 
 # Job working directory
 # (Don't change this)
@@ -94,14 +94,14 @@ cd build
 cmake -DCMAKE_BUILD_TYPE=Release ~/Swarms_Group_2
 make -j4
 cd ..
-cp ~/Swarms_Group_2/experiments .
-cp ~/Swarms_Group_2/buzz .
+cp -r ~/Swarms_Group_2/experiments .
+cp -r ~/Swarms_Group_2/buzz .
 bzzc buzz/emergent_behavior.bzz
 ./build/embedding/mpga/mpga_emergent_behavior ${RAND_SEED}
 
 # Transfer info back to my home directory
 mkdir data_${THISJOB}
 mv *.dat *.csv data_${THISJOB}/
-zip data_${THISJOB}.zip data_${THISJOB}
+zip data_${THISJOB}.zip data_${THISJOB}/*
 
-cp -a data_${THISJOB} ${DATADIR}
+cp -a data_${THISJOB}.zip ${DATADIR}
