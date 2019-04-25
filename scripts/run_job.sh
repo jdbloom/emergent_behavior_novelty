@@ -92,7 +92,7 @@ trap cleanup EXIT SIGINT SIGTERM
 cp -r ~/Swarms_Group_2/experiments .
 cp -r ~/Swarms_Group_2/buzz .
 bzzc buzz/emergent_behavior.bzz
-~/Swarms_Group_2/build/embedding/mpga/mpga_emergent_behavior ${RAND_SEED}
+/home/djcupo/Swarms_Group_2/build/embedding/mpga_emergent_behavior ${RAND_SEED}
 
 # Transfer info back to my home directory
 mkdir data_${THISJOB}

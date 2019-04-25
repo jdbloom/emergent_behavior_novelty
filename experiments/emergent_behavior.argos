@@ -45,9 +45,9 @@
     <!-- * Loop functions * -->
     <!-- ****************** -->
 
-    <loop_functions library="build/loop_functions/mpga_loop_functions/libmpga_emergent_behavior_loop_functions.so"
+    <loop_functions library="/home/djcupo/Swarms_Group_2/build/loop_functions/libmpga_emergent_behavior_loop_functions.so"
                     label="mpga_emergent_behavior_loop_functions"
-                    num_robots="20">
+                    num_robots="15">
     </loop_functions>
 
     <!-- *********************** -->
