@@ -44,6 +44,7 @@ function init() {
 
 
 function step() {
+    #printGenome()
 	neighbors.broadcast("state", CUR_STATE)
 	var reading = sensor()
 	updateFields(reading)
@@ -89,6 +90,9 @@ function calcSpeed(vl, vr){
     return (vl + vr) / 2.0;
 }
 
+function printGenome(){
+    log("ID: ", id, " ", genome[0], " ", genome[1]," ", genome[2])
+}
 
 function sensor(){
 	closest_dist = 2*SEN_DIST_CM
@@ -98,20 +102,16 @@ function sensor(){
 			if (data.distance < SEN_DIST_CM) {
 				if ((data.azimuth > -SEN_APERTURE_SPLIT_RAD) and (data.azimuth < SEN_APERTURE_SPLIT_RAD)) {
 					if (data.distance < closest_dist) {
-						# log("ID: ", id, " new nearest dist @ ", data.distance, " with: ", rid)
 						closest_dist = data.distance
 						closest_rid = rid
 					}
 				}
 			}
 		})
-	#log("ID: ", id, " closest_rid: ", closest_rid)
 	var target_state = -1
 	neighbors.listen("state", 
 		function(vid, value, rid){
-			#log("ID: ", id, " got (", vid, ",", value, ") from robot: ", rid)
 			if (rid == closest_rid) {
-				#log("ID: ", id, " state message from -> ", rid, " of value: ", value)
 				target_state = value
 			}
 		})
