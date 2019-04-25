@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(emergent_behavior)
+set (CMAKE_CXX_STANDARD 11)
 
 if (APPLE)
     option(ASAN "Use Clang Address Sanitizer in Debug builds")
