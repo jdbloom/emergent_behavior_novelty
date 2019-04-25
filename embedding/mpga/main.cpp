@@ -26,14 +26,14 @@ void FlushIndividual(const CMPGA::SIndividual &s_ind,
     cOFS << std::endl;
 }
 
-void FlushToMasterFile(const std::vector<pid_t> &slavePIDs){
+void FlushToMasterFile(const std::vector<pid_t> &slavePIDs) {
     std::ofstream masterScoreFile("master_scores.csv", std::ios::out | std::ios::app);
-    if(masterScoreFile.is_open()){
-        for(auto pid : slavePIDs){
+    if (masterScoreFile.is_open()) {
+        for (auto pid : slavePIDs) {
             std::ifstream indScoreFile(std::string("score_" + ToString(pid) + ".csv").c_str(), std::ios::in);
             std::string line;
-            if(indScoreFile.is_open()){
-                while(getline(indScoreFile, line)){
+            if (indScoreFile.is_open()) {
+                while (getline(indScoreFile, line)) {
                     masterScoreFile << line << std::endl;
                 }
             }
@@ -41,7 +41,40 @@ void FlushToMasterFile(const std::vector<pid_t> &slavePIDs){
         }
     }
     masterScoreFile.close();
+}
 
+void FlushNamesToMasterFile() {
+    std::ofstream masterScoreFile("master_scores.csv", std::ios::out | std::ios::app);
+    if (masterScoreFile.is_open()) {
+        masterScoreFile <<
+                        "s'00" << "," <<
+                        "vl00" << "," <<
+                        "vr00" << "," <<
+                        "s'01" << "," <<
+                        "vl01" << "," <<
+                        "vr01" << "," <<
+                        "s'10" << "," <<
+                        "vl10" << "," <<
+                        "vr10" << "," <<
+                        "s'11" << "," <<
+                        "vl11" << "," <<
+                        "vr11" << "," <<
+                        "s'20" << "," <<
+                        "vl20" << "," <<
+                        "vr20" << "," <<
+                        "s'21" << "," <<
+                        "vl21" << "," <<
+                        "vr21" << "," <<
+                        "sparse" << "," <<
+                        "dist" << "," <<
+                        "radial" << "," <<
+                        "speed" << "," <<
+                        "angle" << "," <<
+                        "state0" << "," <<
+                        "SCORE" << std::endl;
+
+    }
+    masterScoreFile.close();
 }
 
 /*
@@ -55,7 +88,7 @@ Real ScoreAggregator(const std::vector<Real> &vec_scores) {
 }
 
 int main(int argc, char *argv[]) {
-    if(argc != 2){
+    if (argc != 2) {
         std::cerr << "Didn't provide the randseed" << std::endl;
     }
 
@@ -63,19 +96,20 @@ int main(int argc, char *argv[]) {
 
     CMPGA cGA(CRange<Real>(0, 10.0),                    // Allele range
               GENOME_SIZE,                              // Genome size
-              5,                                        // Population size
+              4, //change this to number of cores                                        // Population size
               0.05,                                     // Mutation probability
               1,                                        // Number of trials
-              100,                                      // Number of generations
+              50, //make this not two                                     // Number of generations
               true,                                     // Maximize score
               "experiments/emergent_behavior.argos",    // .argos conf file
               &ScoreAggregator,                         // The score aggregator
               randSeed                                  // Random seed
     );
+    FlushNamesToMasterFile();
     cGA.Evaluate();
     argos::LOG << "Generation #" << cGA.GetGeneration() << "...";
     argos::LOG << " scores:";
-    for (auto pop : cGA.GetPopulation()){
+    for (auto pop : cGA.GetPopulation()) {
         argos::LOG << " " << pop->Score;
     }
     LOG << std::endl;
