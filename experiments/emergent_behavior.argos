@@ -6,7 +6,7 @@
     <!-- ************************* -->
     <framework>
         <system threads="0"/>
-        <experiment length="60"
+        <experiment length="180"
                     ticks_per_second="10"
                     random_seed="90"/>
     </framework>
@@ -45,9 +45,9 @@
     <!-- * Loop functions * -->
     <!-- ****************** -->
 
-    <loop_functions library="build-debug/loop_functions/mpga_loop_functions/libmpga_emergent_behavior_loop_functions.so"
+    <loop_functions library="build/loop_functions/mpga_loop_functions/libmpga_emergent_behavior_loop_functions.so"
                     label="mpga_emergent_behavior_loop_functions"
-                    num_robots="15">
+                    num_robots="20">
     </loop_functions>
 
     <!-- *********************** -->
@@ -109,11 +109,10 @@
     <!-- ****************** -->
     <!-- * Visualization * -->
     <!-- ****************** -->
-<!--
-    <visualization>
-        <qt-opengl>
-            <user_functions label="buzz_qt"/>
-        </qt-opengl>
-    </visualization>
--->
+    <!--<visualization>-->
+        <!--<qt-opengl>-->
+            <!--<user_functions label="buzz_qt"/>-->
+        <!--</qt-opengl>-->
+    <!--</visualization>-->
+
 </argos-configuration>
