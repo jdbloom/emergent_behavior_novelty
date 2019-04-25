@@ -19,11 +19,11 @@ add_library(mpga_emergent_behavior_loop_functions SHARED
 
 target_link_libraries(mpga_emergent_behavior_loop_functions
         argos3core_simulator
+        ${BUZZ_LIBRARY}
         argos3plugin_simulator_dynamics2d
         argos3plugin_simulator_entities
         argos3plugin_simulator_genericrobot
         argos3plugin_simulator_kheperaiv
         argos3plugin_simulator_media
         mpga
-        analysis
-        ${BUZZ_LIBRARY})
+        analysis)

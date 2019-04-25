@@ -9,7 +9,7 @@ set -e
 # Cleanup function to be executed upon exit, for any reason
 function cleanup() {
     mkdir -p /home/djcupo/ERRORS
-    cp * /home/djcupo/ERRORS
+    cp ARG* /home/djcupo/ERRORS
     rm -rf ${WORKDIR}
 }
 

@@ -41,5 +41,6 @@ build-debug
 build-release
 .idea/
 
+*.csv
 *.dat
 
