@@ -91,7 +91,7 @@ rm -rf ${WORKDIR} && mkdir -p ${WORKDIR} && cd ${WORKDIR}
 
 cp -r ~/Swarms_Group_2/experiments .
 cp -r ~/Swarms_Group_2/buzz .
-bzzc buzz/emergent_behavior.bzz
+/home/djcupo/buzzbundle/bin/bzzc buzz/emergent_behavior.bzz
 /home/djcupo/Swarms_Group_2/build/embedding/mpga_emergent_behavior ${RAND_SEED}
 
 # Transfer info back to my home directory
