@@ -96,10 +96,10 @@ int main(int argc, char *argv[]) {
 
     CMPGA cGA(CRange<Real>(0, 10.0),                    // Allele range
               GENOME_SIZE,                              // Genome size
-              4, //change this to number of cores                                        // Population size
+              16, //change this to number of cores                                        // Population size
               0.05,                                     // Mutation probability
               1,                                        // Number of trials
-              3, //make this not two                                     // Number of generations
+              10, //make this not two                                     // Number of generations
               true,                                     // Maximize score
               "experiments/emergent_behavior.argos",    // .argos conf file
               &ScoreAggregator,                         // The score aggregator
