@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
               4, //change this to number of cores                                        // Population size
               0.05,                                     // Mutation probability
               1,                                        // Number of trials
-              50, //make this not two                                     // Number of generations
+              3, //make this not two                                     // Number of generations
               true,                                     // Maximize score
               "experiments/emergent_behavior.argos",    // .argos conf file
               &ScoreAggregator,                         // The score aggregator
