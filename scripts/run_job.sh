@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 #SBATCH -J emergent_behavior
 #SBATCH -N 1
-#SBATCH -n 16
+#SBATCH -n 24
+#SBATCH --mem 8G
+#SBATCH --gres=gpu:0
+#SBATCH -t 3:00:00
+#SBATCH -C E5-2680
 
 # Stop execution after any error
 set -e
@@ -9,7 +13,7 @@ set -e
 # Cleanup function to be executed upon exit, for any reason
 function cleanup() {
     mkdir -p /home/djcupo/ERRORS
-    cp ARG* /home/djcupo/ERRORS
+    cp * /home/djcupo/ERRORS
     rm -rf ${WORKDIR}
 }
 
