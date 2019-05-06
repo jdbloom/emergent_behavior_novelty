@@ -10,6 +10,7 @@
 
 /*
  * Flush best individual
+ * Writes gnome to file "best"
  */
 void FlushIndividual(const CMPGA::SIndividual &s_ind,
                      UInt32 un_generation) {
@@ -26,6 +27,9 @@ void FlushIndividual(const CMPGA::SIndividual &s_ind,
     cOFS << std::endl;
 }
 
+/*
+* add all scores from each generation from the master file
+*/
 void FlushToMasterFile(const std::vector<pid_t> &slavePIDs) {
     std::ofstream masterScoreFile("master_scores.csv", std::ios::out | std::ios::app);
     if (masterScoreFile.is_open()) {
@@ -43,6 +47,10 @@ void FlushToMasterFile(const std::vector<pid_t> &slavePIDs) {
     masterScoreFile.close();
 }
 
+/*
+* called when mater file gets created
+* names all columns in the csv
+*/
 void FlushNamesToMasterFile() {
     std::ofstream masterScoreFile("master_scores.csv", std::ios::out | std::ios::app);
     if (masterScoreFile.is_open()) {
@@ -96,11 +104,11 @@ int main(int argc, char *argv[]) {
 
     CMPGA cGA(CRange<Real>(0, 10.0),                    // Allele range
               GENOME_SIZE,                              // Genome size
-              4, //change this to number of cores                                        // Population size
+              4, //change this to number of cores       // Population size
               0.05,                                     // Mutation probability
               1,                                        // Number of trials
-              2, //make this not two                                     // Number of generations
-              true,                                     // Maximize score
+              2, //make this not two                    // Number of generations
+              true,                                     // Maximize score (False will minimize score)
               "experiments/emergent_behavior.argos",    // .argos conf file
               &ScoreAggregator,                         // The score aggregator
               randSeed                                  // Random seed
