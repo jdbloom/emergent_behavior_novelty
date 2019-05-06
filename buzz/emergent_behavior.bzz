@@ -1,38 +1,45 @@
 
+#Sensor width in degrees. 5 deg is the default as per the orignal papers choice
 SEN_APERTURE_DEG = 5.0
+
+#Converts the chosen angle into radians and divides it in half. This is because we are checking +/- half the distance on either side of the robots heading
 SEN_APERTURE_SPLIT_RAD = 0.5* SEN_APERTURE_DEG * math.pi / 180.0
 
+#Sensor distance in cm. Default is 300 cm
 SEN_DIST_CM = 300
 
+#Global variable for what the current state is
 CUR_STATE = 0
 
-
+#Global variable for what the robots current speed is
 speed = 0.0
 
 # (Type)(Reading)(State)
+#   s*      0       0
 genome = {
-    .0  = 0.0, #s'00
+    .0  = 0.0, #s`00
     .1  = 1.0, #vl00
     .2  = 1.0, #vr00
-    .3  = 0.0, #s'01
+    .3  = 0.0, #s`01
     .4  = 1.0, #vl01
     .5  = 1.0, #vr01
-    .6  = 0.0, #s'10
+    .6  = 0.0, #s`10
     .7  = 1.0, #vl10
     .8  = 1.0, #vr10
-    .9  = 0.0, #s'11
+    .9  = 0.0, #s`11
     .10 = 1.0, #vl11
     .11 = 1.0, #vr11
-    .12 = 0.0, #s'20
+    .12 = 0.0, #s`20
     .13 = 1.0, #vl20
     .14 = 1.0, #vr20
-    .15 = 0.0, #s'21
+    .15 = 0.0, #s`21
     .16 = 1.0, #vl21
     .17 = 1.0  #vr21
 }
 
 ### BUZZ FUNCTIONS ##
 function init() {
+	# Initializes the state, x, y, z, reading, and speed variables
 	CUR_STATE = id % 2
 	cur_x = pose.position.x
 	cur_y = pose.position.y
@@ -45,9 +52,17 @@ function init() {
 
 function step() {
     #printGenome()
+
+    #Broadcasts the robots current state for the sensor
 	neighbors.broadcast("state", CUR_STATE)
+
+	# gets the current sensor reading 
 	var reading = sensor()
+
+	# updates the internal fields for the loop functions at the end
 	updateFields(reading)
+
+	# state machine to set wheels speeds and new state depending on current state and reading
 	if (CUR_STATE == 0) {
 		if(reading == 0) {
 		    CUR_STATE = genomeToState(genome[0])
@@ -79,6 +94,7 @@ function step() {
 	}
 }
 
+# This just handles the 0.0 - 10.0 --> 0, 1 conversion from genome to state
 function genomeToState(genome){
     if (genome >= 5.0){
         return 1
@@ -86,21 +102,33 @@ function genomeToState(genome){
     return 0
 }
 
+# Takes in the wheel speed and gives a singular value for use in analysis
 function calcSpeed(vl, vr){
     return (vl + vr) / 2.0;
 }
 
+# Prints the ID and the first three values of the genome for debugging purposes
 function printGenome(){
     log("ID: ", id, " ", genome[0], " ", genome[1]," ", genome[2])
 }
 
+#Calculates the reading from current inputs. More description internal
 function sensor(){
+
+	#closest_*** are iniitlized to a very high distance, and impossible robot id so that the checks have a valid value to compare against
 	closest_dist = 2*SEN_DIST_CM
 	closest_rid = -1
+
+	# we check each neighbor
 	neighbors.foreach(
 		function(rid, data){
+			# First we check that the neighbor is within the simulated range
 			if (data.distance < SEN_DIST_CM) {
+
+				# Then we check if the neighbor is within the width of our simulated sensor
 				if ((data.azimuth > -SEN_APERTURE_SPLIT_RAD) and (data.azimuth < SEN_APERTURE_SPLIT_RAD)) {
+
+					# Then if we have multiple possible choices, we keep saving the closest 
 					if (data.distance < closest_dist) {
 						closest_dist = data.distance
 						closest_rid = rid
@@ -108,6 +136,7 @@ function sensor(){
 				}
 			}
 		})
+	# we check the state of the closest robot
 	var target_state = -1
 	neighbors.listen("state", 
 		function(vid, value, rid){
@@ -115,6 +144,8 @@ function sensor(){
 				target_state = value
 			}
 		})
+
+	# state machine to determine the 0, 1, 2 return of the sensor depending on whether the states match
 	if (closest_rid == -1) {
 		return 0
 	} else if (target_state == CUR_STATE) {
@@ -125,6 +156,7 @@ function sensor(){
 
 }
 
+# just updates the variables that the loop functions read with the sensor reading. 
 function updateFields(sensor_reading) {
 	cur_x = pose.position.x
 	cur_y = pose.position.y

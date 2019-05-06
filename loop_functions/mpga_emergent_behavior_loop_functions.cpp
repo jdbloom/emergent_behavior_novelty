@@ -56,19 +56,26 @@ struct PutGenome : public CBuzzLoopFunctions::COperation {
 struct GetRobotData : public CBuzzLoopFunctions::COperation {
 
     /** Constructor */
+    //temp is unneeded, but if we get rid of it, it errors out. So we left it in *shrug*
     GetRobotData(int t) : temp(t) {}
 
     /** The action happens here */
     virtual void operator()(const std::string& str_robot_id,
                             buzzvm_t t_vm) {
+
+        // get the buzzobj corresponding to the value we want
         buzzobj_t tCurX = BuzzGet(t_vm, "cur_x");
+
+        // confirm the value is the type we expect. Print error and then exit if they don't match
         if (!buzzobj_isfloat(tCurX)) {
             LOGERR << str_robot_id << ": variable 'cur_x' has wrong type " << buzztype_desc[tCurX->o.type] << std::endl;
             return;
         }
 
+        //Cast the value to the appropriate type and variable
         float fCurX = buzzobj_getfloat(tCurX);
 
+        //Repeat the process with every other variable
         buzzobj_t tCurY = BuzzGet(t_vm, "cur_y");
         if (!buzzobj_isfloat(tCurY)) {
             LOGERR << str_robot_id << ": variable 'cur_y' has wrong type " << buzztype_desc[tCurY->o.type] << std::endl;
@@ -109,6 +116,7 @@ struct GetRobotData : public CBuzzLoopFunctions::COperation {
 
         float fCurSpeed = buzzobj_getfloat(tCurSpeed);
 
+        //Add each value to the back of the vector that stores all this
         m_vecRobotX.push_back(fCurX);
         m_vecRobotY.push_back(fCurY);
         m_vecRobotZ.push_back(fCurZ);
@@ -135,16 +143,18 @@ struct GetRobotData : public CBuzzLoopFunctions::COperation {
 
 void CMPGAEmergentBehaviorLoopFunctions::Init(TConfigurationNode &t_node) {
 
-    LOGERR << "Started Init" << std::endl;
-    LOGERR.Flush();
+    // printErr("Statrted Init");
+    //From the argos XML, get the number of robots we want to test with
     UInt32 iNumRobots;
     GetNodeAttribute(t_node, "num_robots", iNumRobots);
+
+    //Create, locate, and place all the robots
     CreateRobots(iNumRobots);
-    LOGERR << "Got num Robots" << std::endl;
-    LOGERR.Flush();
+    // printErr("Got numRobots");
 
     /*
      * Process trial information, if any
+     * Not really used for us, unless you wish to trial a genome 
      */
     try {
         UInt32 unTrial;
@@ -153,8 +163,7 @@ void CMPGAEmergentBehaviorLoopFunctions::Init(TConfigurationNode &t_node) {
         Reset();
     }
     catch (CARGoSException &ex) {}
-    LOGERR << "Finished Init" << std::endl;
-    LOGERR.Flush();
+    // printErr("Fiished INIT");
 }
 
 /****************************************/
@@ -164,8 +173,9 @@ void CMPGAEmergentBehaviorLoopFunctions::Reset() {
     /*
      * Move robot to the initial position corresponding to the current trial
      */
-    LOGERR << "Started Reset" << std::endl;
-    LOGERR.Flush();
+    // printErr("Started Reset");
+
+    //For each robot, check to see if it moved, if it had, put it back. IF it errors out, print the robot and where we tried to move it to
     for(size_t i = 0; i < m_vecKheperas.size(); i++){
         if(!MoveEntity(
                 m_vecKheperas[i]->GetEmbodiedEntity(),        //Move this robot
@@ -181,12 +191,12 @@ void CMPGAEmergentBehaviorLoopFunctions::Reset() {
                    << std::endl;
         }
     }
-    LOGERR << "Finished Reset" << std::endl;
-    LOGERR.Flush();
+    // printErr("Finished Reset");
 }
 
 /****************************************/
 /****************************************/
+//For whatever reason, if you don't put the genome back each time step, it defaults back to the 0.0 defaults. 
 void CMPGAEmergentBehaviorLoopFunctions::PreStep() {
     PutGenome cPutGenome(m_pfControllerParams);
     BuzzForeachVM(cPutGenome);
@@ -194,6 +204,7 @@ void CMPGAEmergentBehaviorLoopFunctions::PreStep() {
 /****************************************/
 /****************************************/
 
+//This is just a wrapper that takes the genome values supplied by MPGA and places them in the buzz script
 void CMPGAEmergentBehaviorLoopFunctions::ConfigureFromGenome(const Real *pf_genome) {
     printErr("Started Config from Genome");
     /* Copy the genes into the NN parameter buffer */
@@ -202,34 +213,50 @@ void CMPGAEmergentBehaviorLoopFunctions::ConfigureFromGenome(const Real *pf_geno
     }
     PutGenome cPutGenome(m_pfControllerParams);
     BuzzForeachVM(cPutGenome);
-    printErr("finished config from genome");
+    // printErr("finished config from genome");
 }
 
 /****************************************/
 /****************************************/
 
+//Oh buddy
 Real CMPGAEmergentBehaviorLoopFunctions::Score() {
-    printErr("Started Score");
+    // printErr("Started Score");
+    //Get the robot data
     GetRobotData cGetRobotData(0);
     BuzzForeachVM(cGetRobotData);
-    printErr("Finished Get data");
+    // printErr("Finished Get data");
 
+    //Create the Analysis class, with the vectors from the data
     CAnalysis analysis(cGetRobotData.m_vecRobotX, cGetRobotData.m_vecRobotY, cGetRobotData.m_vecRobotZ,
                        cGetRobotData.m_vecRobotSpeed, cGetRobotData.m_vecRobotState);
+
+    //Analyze all, and save the results in a struct that has each value. 
     CAnalysis::AnalysisResults results = analysis.AnalyzeAll();
 
+    //Open the master file as READ-ONLY. This is important, you can open a file from multiple locations read only, but if you try to open it to write things get fucky. Don't let them get fucky. 
     std::ifstream score_files("master_scores.csv", std::ios::in);
 
+    //Variables for reference later
     std::string line;
     Real minDistance = 99999;
-    LOGERR << "Started Grading" << std::endl;
-    LOGERR.Flush();
+    // printErr("Started Scoring");
+
+    //This makes sure we ignore the first value, which are the names of the csv columns
     bool skipped = false;
+
+    //Confirm the file opened
     if(score_files.is_open()){
+        //While loop to iterate over each line. getLine will return 0 when there are no more lines, exiting the loop 
         while(getline( score_files, line)){
             if(skipped){
+                //Make and array the size of the genome + the size of the feature values + 1 for the score tacked onto the end
                 double scores[GENOME_SIZE + results.size + 1]; //Genomes, feature scores, +1 for the actual score that gets added
+
+                //Parse the line and store the values in scores array
                 ParseValues(line, (UInt32) GENOME_SIZE + results.size, scores ,',');
+
+                //Pull out the values for easier reference
                 Real comp_sparseness = scores[GENOME_SIZE];
                 Real comp_distance = scores[GENOME_SIZE + 1];
                 Real comp_radial = scores[GENOME_SIZE + 2];
@@ -238,11 +265,14 @@ Real CMPGAEmergentBehaviorLoopFunctions::Score() {
                 //State difference is not calculated as part of the score
                 //Same with the previous generations
 
+                //Find the distance from basic pythagorian method. Dist is the score
                 Real dist = sqrt(pow(comp_sparseness - results.Sparseness, 2) +
                                  pow(comp_distance - results.Distance, 2) +
                                  pow(comp_radial - results.RadialStdDev, 2) +
                                  pow(comp_speed - results.Speed, 2) +
                                  pow(comp_angular - results.AngularMomentum, 2));
+
+                //We want to find the shortest distance
                 if (dist < minDistance){
                     minDistance = dist;
                 }
@@ -253,18 +283,25 @@ Real CMPGAEmergentBehaviorLoopFunctions::Score() {
     } else {
         minDistance = 0;
     }
-    LOGERR << "Finished Grading" << std::endl;
-    LOGERR.Flush();
+    // printErr("Finished Scoring");
+
+    //Close the master score file. VERY IMPORTANT
     score_files.close();
 
 
-    LOGERR << "Started flushing individual to file" << std::endl;
-    LOGERR.Flush();
+    // printErr("Flushing genomes to inidividual files");
+
+    //Open the file for that genome. 
     std::ofstream cScoreFile(std::string("score_" + ToString(::getpid()) + ".csv").c_str(), std::ios::out | std::ios::trunc);
+
+    //Confirm the file is open
     if(cScoreFile.is_open()){
+        //Output each genome value
         for(auto val : m_pfControllerParams){
             cScoreFile << val << ',';
         }
+
+        //Output the feature values and the score (minDistance)
         cScoreFile
                 << results.Sparseness << ','
                 << results.Distance << ','
@@ -276,6 +313,7 @@ Real CMPGAEmergentBehaviorLoopFunctions::Score() {
     } else {
         //panic
     }
+    //Close the score file
     cScoreFile.close();
 
     /* The performance is simply the distance of the robot to the origin */
@@ -284,18 +322,22 @@ Real CMPGAEmergentBehaviorLoopFunctions::Score() {
 
 /****************************************/
 /****************************************/
-
 void CMPGAEmergentBehaviorLoopFunctions::CreateRobots(UInt32 un_robots) {
+    //The angular gap between each robot. Dependent on the number of robots
     CRadians robStep = CRadians::TWO_PI / static_cast<Real>(un_robots);
     CRadians cOrient;
+
+    //for each robot, calculate the positon based on spherical coordinates
     for(size_t i = 0; i < un_robots; ++i) {
         CVector3 pos;
         pos.FromSphericalCoords(
                 2.0f,
                 CRadians::PI_OVER_TWO,
                 CRadians(i * robStep));
+        //Make sure they're on the ground, otherwise it breaks
         pos.SetZ(0.0);
 
+        //Randomly choose the starting orientation
         CQuaternion head;
         cOrient = m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE);
         head.FromEulerAngles(
@@ -327,9 +369,12 @@ void CMPGAEmergentBehaviorLoopFunctions::CreateRobots(UInt32 un_robots) {
     BuzzRegisterVMs();
 }
 
+//Easy wrapper for printing to the error log so when you get a "Blah failed. Check ARGoS_LOGERR_#### there's actually something useful there"
 void CMPGAEmergentBehaviorLoopFunctions::printErr(std::string in){
     LOGERR << in << std::endl;
     LOGERR.Flush();
 }
 
+
+//Register the loop functions so buzz and ARGoS can find it
 REGISTER_LOOP_FUNCTIONS(CMPGAEmergentBehaviorLoopFunctions, "mpga_emergent_behavior_loop_functions")
